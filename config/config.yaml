@@ -1,0 +1,85 @@
+project:
+  name: "Credit Risk Decision Intelligence"
+  team: "West Virginia"
+  course: "FSE 570"
+
+data:
+  raw_path: "data/raw/Lending_club_data.csv"
+  processed_path: "data/processed/"
+  test_size: 0.2
+  random_state: 42
+  target_column: "default"
+
+preprocessing:
+  drop_leakage_cols:
+    - "loan_status"
+    - "total_pymnt"
+    - "recoveries"
+    - "grade"
+    - "sub_grade"
+  categorical_cols:
+    - "home_ownership"
+    - "purpose"
+    - "application_type"
+  numerical_cols:
+    - "loan_amnt"
+    - "annual_inc"
+    - "dti"
+    - "fico_range_low"
+    - "fico_range_high"
+    - "inq_last_6mths"
+    - "delinq_2yrs"
+
+feature_engineering:
+  loan_to_income: true
+  credit_age: true
+  credit_score_avg: true
+  purpose_macro_groups: true
+
+models:
+  xgboost:
+    n_estimators: 300
+    max_depth: 6
+    learning_rate: 0.05
+    scale_pos_weight: 10        # handles class imbalance
+    use_label_encoder: false
+    eval_metric: "auc"
+    random_state: 42
+  lightgbm:
+    n_estimators: 300
+    max_depth: 6
+    learning_rate: 0.05
+    is_unbalance: true
+    random_state: 42
+  random_forest:
+    n_estimators: 200
+    max_depth: 10
+    class_weight: "balanced"
+    random_state: 42
+
+evaluation:
+  threshold: 0.5
+  cv_folds: 5
+  metrics:
+    - "roc_auc"
+    - "f1"
+    - "precision"
+    - "recall"
+    - "brier_score"
+
+shap:
+  max_display: 20
+  sample_size: 1000             # rows for background dataset
+
+llm:
+  provider: "openai"            # or "anthropic"
+  model: "gpt-4o-mini"
+  temperature: 0.2
+  system_prompt: >
+    You are a credit risk analyst assistant. Explain model predictions
+    in plain language using SHAP values and loan features provided.
+
+dashboard:
+  host: "0.0.0.0"
+  port: 8050
+  debug: true
