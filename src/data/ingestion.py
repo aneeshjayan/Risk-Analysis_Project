@@ -5,16 +5,15 @@ Owner: Jayasurya Sakthivel
 """
 
 import pandas as pd
-import yaml
 from pathlib import Path
 
 
-def load_config(config_path: str = "config/config.yaml") -> dict:
-    with open(config_path, "r") as f:
-        return yaml.safe_load(f)
+RAW_DATA_PATH = "data/raw/Lending_club_data.csv"
+TARGET_COL = "default"
+LEAKAGE_COLS = ["loan_status", "total_pymnt", "recoveries", "grade", "sub_grade"]
 
 
-def load_raw_data(file_path: str) -> pd.DataFrame:
+def load_raw_data(file_path: str = RAW_DATA_PATH) -> pd.DataFrame:
     """Load a single CSV/parquet dataset from disk."""
     path = Path(file_path)
     if path.suffix == ".parquet":
@@ -29,13 +28,13 @@ def validate_schema(df: pd.DataFrame, required_cols: list[str]) -> None:
         raise ValueError(f"Schema validation failed. Missing columns: {missing}")
 
 
-def remove_leakage_columns(df: pd.DataFrame, leakage_cols: list[str]) -> pd.DataFrame:
+def remove_leakage_columns(df: pd.DataFrame, leakage_cols: list[str] = LEAKAGE_COLS) -> pd.DataFrame:
     """Drop post-loan leakage variables (payments, recoveries, grades)."""
     cols_to_drop = [c for c in leakage_cols if c in df.columns]
     return df.drop(columns=cols_to_drop)
 
 
-def build_target(df: pd.DataFrame, target_col: str = "default") -> pd.DataFrame:
+def build_target(df: pd.DataFrame, target_col: str = TARGET_COL) -> pd.DataFrame:
     """Ensure binary PD target exists (1 = default, 0 = non-default)."""
     if target_col not in df.columns:
         raise ValueError(f"Target column '{target_col}' not found.")
@@ -43,11 +42,10 @@ def build_target(df: pd.DataFrame, target_col: str = "default") -> pd.DataFrame:
     return df
 
 
-def run_ingestion(config_path: str = "config/config.yaml") -> pd.DataFrame:
-    """Full ingestion pipeline: load -> validate -> remove leakage -> build target."""
-    config = load_config(config_path)
-    df = load_raw_data(config["data"]["raw_path"])
-    remove_leakage_columns(df, config["preprocessing"]["drop_leakage_cols"])
-    df = build_target(df, config["data"]["target_column"])
+def run_ingestion(file_path: str = RAW_DATA_PATH) -> pd.DataFrame:
+    """Full ingestion pipeline: load -> remove leakage -> build target."""
+    df = load_raw_data(file_path)
+    df = remove_leakage_columns(df)
+    df = build_target(df)
     print(f"Ingestion complete. Shape: {df.shape}")
     return df

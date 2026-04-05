@@ -12,8 +12,7 @@ from pathlib import Path
 
 class BaseCreditModel(ABC):
 
-    def __init__(self, config: dict):
-        self.config = config
+    def __init__(self):
         self.model = None
         self.model_name: str = "base"
 

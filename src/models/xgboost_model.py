@@ -9,18 +9,23 @@ from .base_model import BaseCreditModel
 
 class XGBoostModel(BaseCreditModel):
 
-    def __init__(self, config: dict):
-        super().__init__(config)
+    def __init__(self, n_estimators=300, max_depth=6, learning_rate=0.05,
+                 scale_pos_weight=10, random_state=42):
+        self.n_estimators = n_estimators
+        self.max_depth = max_depth
+        self.learning_rate = learning_rate
+        self.scale_pos_weight = scale_pos_weight
+        self.random_state = random_state
+        self.model = None
         self.model_name = "xgboost"
 
     def build(self) -> None:
-        params = self.config["models"]["xgboost"]
         self.model = XGBClassifier(
-            n_estimators=params.get("n_estimators", 300),
-            max_depth=params.get("max_depth", 6),
-            learning_rate=params.get("learning_rate", 0.05),
-            scale_pos_weight=params.get("scale_pos_weight", 10),
-            eval_metric=params.get("eval_metric", "auc"),
-            random_state=params.get("random_state", 42),
+            n_estimators=self.n_estimators,
+            max_depth=self.max_depth,
+            learning_rate=self.learning_rate,
+            scale_pos_weight=self.scale_pos_weight,
+            eval_metric="auc",
+            random_state=self.random_state,
             n_jobs=-1,
         )

@@ -11,6 +11,11 @@ from sklearn.preprocessing import StandardScaler
 import joblib
 from pathlib import Path
 
+TARGET_COL = "default"
+TEST_SIZE = 0.2
+RANDOM_STATE = 42
+CAT_COLS = ["home_ownership", "purpose", "application_type"]
+
 
 def drop_high_null_columns(df: pd.DataFrame, threshold: float = 0.5) -> pd.DataFrame:
     """Drop columns where null fraction exceeds threshold."""
@@ -56,9 +61,9 @@ def scale_features(
 
 def split_data(
     df: pd.DataFrame,
-    target_col: str = "default",
-    test_size: float = 0.2,
-    random_state: int = 42,
+    target_col: str = TARGET_COL,
+    test_size: float = TEST_SIZE,
+    random_state: int = RANDOM_STATE,
 ) -> tuple[pd.DataFrame, pd.DataFrame, pd.Series, pd.Series]:
     """Stratified 80/20 train-test split to preserve class balance."""
     X = df.drop(columns=[target_col])
@@ -66,17 +71,12 @@ def split_data(
     return train_test_split(X, y, test_size=test_size, stratify=y, random_state=random_state)
 
 
-def run_preprocessing(df: pd.DataFrame, config: dict) -> tuple:
+def run_preprocessing(df: pd.DataFrame) -> tuple:
     """Full preprocessing pipeline."""
     df = drop_high_null_columns(df)
     df = impute_missing(df)
-    df = encode_categoricals(df, config["preprocessing"]["categorical_cols"])
-    X_train, X_test, y_train, y_test = split_data(
-        df,
-        target_col=config["data"]["target_column"],
-        test_size=config["data"]["test_size"],
-        random_state=config["data"]["random_state"],
-    )
+    df = encode_categoricals(df, CAT_COLS)
+    X_train, X_test, y_train, y_test = split_data(df)
     X_train, X_test = scale_features(X_train, X_test)
     print(f"Train: {X_train.shape} | Test: {X_test.shape}")
     print(f"Default rate (train): {y_train.mean():.4f}")
