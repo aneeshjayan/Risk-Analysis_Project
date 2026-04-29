@@ -9,6 +9,8 @@ export default defineConfig({
       '/predict': 'http://localhost:8000',
       '/chat':    'http://localhost:8000',
       '/health':  'http://localhost:8000',
+      '/models':  'http://localhost:8000',
+      '/macro':   'http://localhost:8000',
     },
   },
 })

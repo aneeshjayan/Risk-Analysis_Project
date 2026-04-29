@@ -21,10 +21,11 @@ class BaseCreditModel(ABC):
         """Instantiate the underlying sklearn-compatible estimator."""
         ...
 
-    def fit(self, X_train: pd.DataFrame, y_train: pd.Series) -> None:
+    def fit(self, X_train: pd.DataFrame, y_train: pd.Series, **kwargs) -> None:
+        """Train the model. Extra kwargs (e.g. eval_set, callbacks) passed through."""
         if self.model is None:
             self.build()
-        self.model.fit(X_train, y_train)
+        self.model.fit(X_train, y_train, **kwargs)
 
     def predict_proba(self, X: pd.DataFrame) -> np.ndarray:
         return self.model.predict_proba(X)[:, 1]

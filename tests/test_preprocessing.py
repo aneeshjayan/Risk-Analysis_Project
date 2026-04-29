@@ -1,22 +1,19 @@
 """Unit tests for data preprocessing pipeline."""
 
-import pandas as pd
 import numpy as np
+import pandas as pd
 import pytest
-from src.data.preprocessing import (
-    drop_high_null_columns,
-    impute_missing,
-    find_optimal_threshold,
-)
-from src.evaluation.metrics import find_optimal_threshold
+
+from src.data.preprocessing import drop_high_null_columns, impute_missing
+from src.evaluation.metrics import find_optimal_threshold   # correct module
 
 
 def _sample_df():
     return pd.DataFrame({
-        "loan_amnt": [1000, 2000, np.nan, 4000],
-        "annual_inc": [50000, 60000, 70000, 80000],
+        "loan_amnt":   [1000, 2000, np.nan, 4000],
+        "annual_inc":  [50000, 60000, 70000, 80000],
         "mostly_null": [np.nan, np.nan, np.nan, 1.0],
-        "default": [0, 1, 0, 1],
+        "default":     [0, 1, 0, 1],
     })
 
 
@@ -34,7 +31,7 @@ def test_impute_missing():
 
 
 def test_optimal_threshold():
-    y_true = np.array([0, 0, 1, 1, 1])
+    y_true  = np.array([0, 0, 1, 1, 1])
     y_proba = np.array([0.1, 0.4, 0.6, 0.8, 0.9])
-    thresh = find_optimal_threshold(y_true, y_proba)
+    thresh  = find_optimal_threshold(y_true, y_proba)
     assert 0.1 <= thresh <= 0.9

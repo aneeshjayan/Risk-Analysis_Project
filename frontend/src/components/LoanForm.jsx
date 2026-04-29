@@ -82,8 +82,14 @@ export default function LoanForm({ onResult }) {
         body:    JSON.stringify(payload),
       })
       if (!res.ok) {
-        const detail = await res.json()
-        throw new Error(detail.detail || 'Server error')
+        let msg = `Server error ${res.status}`
+        try {
+          const detail = await res.json()
+          msg = detail.detail || JSON.stringify(detail) || msg
+        } catch {
+          msg = await res.text().catch(() => msg)
+        }
+        throw new Error(msg)
       }
       const data = await res.json()
       onResult(payload, data)

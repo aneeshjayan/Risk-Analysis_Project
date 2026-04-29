@@ -37,15 +37,32 @@ def print_metrics(metrics: dict, model_name: str = "") -> None:
 
 
 def cross_validate_model(model, X: pd.DataFrame, y: pd.Series, cv: int = 5) -> dict:
-    """Stratified K-Fold cross-validation. Returns mean/std for AUC and F1."""
+    """Stratified K-Fold cross-validation. Returns mean/std for AUC and F1.
+
+    Clones the underlying estimator before CV so the already-trained model is
+    never mutated. For XGBoost, early_stopping_rounds is disabled on the clone
+    because sklearn's cross_val_score does not pass eval_set to fit().
+    """
+    from sklearn.base import clone
+
     skf = StratifiedKFold(n_splits=cv, shuffle=True, random_state=42)
-    auc_scores = cross_val_score(model.model, X, y, cv=skf, scoring="roc_auc", n_jobs=-1)
-    f1_scores = cross_val_score(model.model, X, y, cv=skf, scoring="f1", n_jobs=-1)
+
+    # Clone so we don't touch the trained model
+    estimator = clone(model.model)
+
+    # XGBoost 2.x: early_stopping_rounds in constructor requires eval_set in fit().
+    # CV calls fit() without eval_set → must disable it on the clone.
+    if hasattr(estimator, "early_stopping_rounds"):
+        estimator.set_params(early_stopping_rounds=None)
+
+    auc_scores = cross_val_score(estimator, X, y, cv=skf, scoring="roc_auc", n_jobs=-1)
+    f1_scores  = cross_val_score(estimator, X, y, cv=skf, scoring="f1",      n_jobs=-1)
+
     return {
-        "cv_auc_mean": auc_scores.mean(),
-        "cv_auc_std": auc_scores.std(),
-        "cv_f1_mean": f1_scores.mean(),
-        "cv_f1_std": f1_scores.std(),
+        "cv_auc_mean": float(auc_scores.mean()),
+        "cv_auc_std":  float(auc_scores.std()),
+        "cv_f1_mean":  float(f1_scores.mean()),
+        "cv_f1_std":   float(f1_scores.std()),
     }
 
 

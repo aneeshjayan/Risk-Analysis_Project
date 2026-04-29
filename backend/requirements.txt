@@ -8,7 +8,8 @@ xgboost==2.0.3
 lightgbm==4.3.0
 shap==0.45.0
 joblib==1.4.2
-anthropic>=0.28.0
+openai>=1.30.0
 python-dotenv==1.0.1
+fredapi>=0.5.0
 matplotlib==3.8.4
 imbalanced-learn==0.12.3
