@@ -48,3 +48,13 @@ reports/figures/*.pdf
 
 # Model artifacts
 models/artifacts/
+models/*.pkl
+models/*.json
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.env
+
+# Backend secrets
+backend/.env
