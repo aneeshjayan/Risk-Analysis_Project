@@ -1,0 +1,31 @@
+{
+  "xgboost": {
+    "loan_amnt": 0.053224,
+    "term": 0.356096,
+    "annual_inc": 0.052461,
+    "emp_length": 0.025376,
+    "fico_range_low": 0.22776,
+    "fico_range_high": 0.059653,
+    "dti": 0.196314,
+    "inq_last_6mths": 0.140915,
+    "delinq_2yrs": 0.018377,
+    "acc_now_delinq": 0.000218,
+    "collections_12_mths_ex_med": 0.004307,
+    "chargeoff_within_12_mths": 0.001482,
+    "pub_rec": 0.024247,
+    "credit_age_years": 0.103848,
+    "credit_score": 0.02081,
+    "loan_to_income": 0.153428,
+    "home_ownership_MORTGAGE": 0.098319,
+    "home_ownership_NONE": 1e-06,
+    "home_ownership_OTHER": 0.000147,
+    "home_ownership_OWN": 0.002072,
+    "home_ownership_RENT": 0.085917,
+    "application_type_Joint App": 0.004394,
+    "purpose_group_Business": 0.01237,
+    "purpose_group_Debt": 0.051432,
+    "purpose_group_Other": 0.013345,
+    "purpose_group_Personal": 0.00904
+  },
+  "_best_model": "xgboost"
+}

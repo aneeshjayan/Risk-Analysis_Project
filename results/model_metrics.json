@@ -1,0 +1,26 @@
+{
+  "xgboost": {
+    "roc_auc": 0.7032,
+    "f1": 0.416,
+    "precision": 0.3179,
+    "recall": 0.6018,
+    "brier_score": 0.2178,
+    "optimal_threshold": 0.52
+  },
+  "lightgbm": {
+    "roc_auc": 0.689,
+    "f1": 0.4042,
+    "precision": 0.3099,
+    "recall": 0.5808,
+    "brier_score": 0.1549,
+    "optimal_threshold": 0.25
+  },
+  "random_forest": {
+    "roc_auc": 0.6958,
+    "f1": 0.4107,
+    "precision": 0.303,
+    "recall": 0.6374,
+    "brier_score": 0.2101,
+    "optimal_threshold": 0.48
+  }
+}
